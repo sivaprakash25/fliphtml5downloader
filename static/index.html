@@ -3,14 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlipHTML5 Downloader</title>
+
+  <title>FlipHTML5 to PDF Downloader — Free Online Flipbook PDF Converter</title>
+  <meta name="description" content="Free FlipHTML5 to PDF downloader. Paste any online.fliphtml5.com book link, download all pages automatically, and save the flipbook as a single PDF for offline reading." />
+  <meta name="keywords" content="fliphtml5 downloader, fliphtml5 to pdf, download fliphtml5 book, fliphtml5 pdf converter, flipbook to pdf, online fliphtml5 download, fliphtml5 save as pdf" />
+  <meta name="author" content="FlipHTML5 Downloader" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="{{SITE_URL}}/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="FlipHTML5 Downloader" />
+  <meta property="og:title" content="FlipHTML5 to PDF Downloader — Free Online Flipbook Converter" />
+  <meta property="og:description" content="Convert FlipHTML5 flipbooks to PDF online. Paste a book URL, track live progress, and download a single PDF file automatically." />
+  <meta property="og:url" content="{{SITE_URL}}/" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="FlipHTML5 to PDF Downloader" />
+  <meta name="twitter:description" content="Paste a FlipHTML5 link and download the full book as one PDF — free online tool with live progress." />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/styles.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FlipHTML5 to PDF Downloader",
+    "description": "Online tool to download FlipHTML5 flipbooks and convert them to a single PDF file.",
+    "url": "{{SITE_URL}}/",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "FlipHTML5 URL to PDF conversion",
+      "Automatic page download",
+      "Live download progress",
+      "High-resolution page images"
+    ]
+  }
+  </script>
 </head>
 <body>
-  <div class="bg">
+  <div class="bg" aria-hidden="true">
     <div class="orb orb-a"></div>
     <div class="orb orb-b"></div>
     <div class="orb orb-c"></div>
@@ -20,40 +61,45 @@
     <header class="hero">
       <div class="logo">
         <span class="logo-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
+          <svg viewBox="0 0 24 24" fill="none" role="img" aria-label="Book icon">
             <path d="M5 4h10a3 3 0 0 1 3 3v13l-4-2.5L10 20V4z" stroke="currentColor" stroke-width="1.6"/>
             <path d="M5 4v13l4-2.5" stroke="currentColor" stroke-width="1.6"/>
           </svg>
         </span>
         <div>
-          <p class="eyebrow">FlipHTML5</p>
-          <h1>Book Downloader</h1>
+          <p class="eyebrow">FlipHTML5 to PDF</p>
+          <h1>Free FlipHTML5 Book Downloader</h1>
         </div>
       </div>
       <p class="subtitle">
-        Paste any public FlipHTML5 link. We fetch and download every page, and build a PDF for you.
+        Convert any public <strong>FlipHTML5</strong> flipbook to PDF online.
+        Paste your <code>online.fliphtml5.com</code> link — we fetch every page and build one PDF for you.
       </p>
     </header>
 
-    <section class="card">
-      <label class="field-label" for="book-url">Book URL</label>
+    <section class="card" aria-labelledby="download-heading">
+      <h2 id="download-heading" class="visually-hidden">Download FlipHTML5 book as PDF</h2>
+      <label class="field-label" for="book-url">FlipHTML5 book URL</label>
       <div class="input-row">
         <input
           id="book-url"
+          name="book-url"
           type="url"
+          inputmode="url"
           placeholder="https://online.fliphtml5.com/ikikw/tvsx/#p=1"
-          autocomplete="off"
+          autocomplete="url"
           spellcheck="false"
+          aria-describedby="url-hint"
         />
-        <button id="start-btn" type="button">
+        <button id="start-btn" type="button" aria-label="Download FlipHTML5 book as PDF">
           <span class="btn-label">Download PDF</span>
-          <span class="btn-spinner" hidden></span>
+          <span class="btn-spinner" hidden aria-hidden="true"></span>
         </button>
       </div>
-      <p class="hint">Works with <code>online.fliphtml5.com</code> and <code>fliphtml5.com</code> links.</p>
+      <p id="url-hint" class="hint">Works with <code>online.fliphtml5.com</code> and <code>fliphtml5.com</code> links.</p>
     </section>
 
-    <section id="progress-panel" class="card progress-card" hidden>
+    <section id="progress-panel" class="card progress-card" hidden aria-live="polite" aria-busy="true">
       <div class="progress-head">
         <div>
           <p class="phase-label" id="phase-label">Preparing</p>
@@ -69,7 +115,7 @@
         </div>
       </div>
 
-      <div class="bar">
+      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar">
         <div class="bar-fill" id="bar-fill"></div>
       </div>
 
@@ -83,14 +129,36 @@
 
       <div class="actions">
         <a id="download-link" class="primary-link" href="#" hidden>Download again</a>
-        <button id="reset-btn" type="button" class="ghost-btn" hidden>Download another</button>
+        <button id="reset-btn" type="button" class="ghost-btn" hidden>Download another book</button>
       </div>
 
-      <p id="error-box" class="error-box" hidden></p>
+      <p id="error-box" class="error-box" hidden role="alert"></p>
     </section>
 
+    <article class="card seo-content">
+      <h2>How to download a FlipHTML5 book as PDF</h2>
+      <p>
+        This free <strong>FlipHTML5 PDF converter</strong> lets you save flipbooks from
+        <a href="https://online.fliphtml5.com" rel="noopener noreferrer">online.fliphtml5.com</a>
+        when no download button is available on the viewer. Copy the book URL from your browser,
+        paste it above, and click <strong>Download PDF</strong>.
+      </p>
+      <h3>What this tool does</h3>
+      <ul>
+        <li>Reads the online <code>config.js</code> from the FlipHTML5 viewer</li>
+        <li>Downloads all page images in full quality</li>
+        <li>Merges pages into one portable PDF file</li>
+        <li>Shows live progress while your book is processed</li>
+      </ul>
+      <h3>Supported links</h3>
+      <p>
+        Any public FlipHTML5 viewer URL, including links with page numbers like
+        <code>#p=1</code>, <code>#p=2</code>, and short links from <code>fliphtml5.com</code>.
+      </p>
+    </article>
+
     <footer class="footer">
-      <p>For personal offline use only. Respect copyright of the original publisher.</p>
+      <p>For personal offline use only. Respect copyright of the original publisher. Not affiliated with FlipHTML5.</p>
     </footer>
   </main>
 

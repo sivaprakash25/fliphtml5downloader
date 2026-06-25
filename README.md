@@ -1,6 +1,10 @@
-# FlipHTML5 Downloader
+# FlipHTML5 to PDF Downloader — Free Flipbook PDF Converter
 
-Download public [FlipHTML5](https://fliphtml5.com) flipbooks as a single PDF. Paste a book URL, fetch the online `config.js`, decrypt the page list, download all page images, and merge them into one PDF.
+> Download FlipHTML5 flipbooks as PDF online or via CLI. Paste a book URL, fetch pages automatically, and save a single PDF for offline reading.
+
+Convert public [FlipHTML5](https://fliphtml5.com) / [online.fliphtml5.com](https://online.fliphtml5.com) flipbooks to PDF. This open-source **FlipHTML5 downloader** fetches the online `config.js`, decrypts the page list, downloads all page images, and merges them into one PDF.
+
+**Keywords:** fliphtml5 to pdf · fliphtml5 downloader · flipbook pdf converter · download fliphtml5 book · save fliphtml5 offline
 
 Includes a **web UI** (paste URL → live progress → auto-download) and a **CLI** for scripting.
 

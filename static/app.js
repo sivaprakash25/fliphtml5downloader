@@ -51,6 +51,10 @@ function updateRing(percent) {
   ringProgress.style.strokeDashoffset = String(offset);
   percentText.textContent = `${percent}%`;
   barFill.style.width = `${percent}%`;
+  const progressBar = document.getElementById("progress-bar");
+  if (progressBar) {
+    progressBar.setAttribute("aria-valuenow", String(percent));
+  }
 }
 
 function updateSteps(phase) {

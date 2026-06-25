@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import json
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import BackgroundTasks, FastAPI, HTTPException
-from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -19,6 +20,22 @@ DOWNLOAD_DIR = APP_DIR / "download"
 DOWNLOAD_DIR.mkdir(exist_ok=True)
 
 job_manager = JobManager(output_root=str(DOWNLOAD_DIR))
+
+
+def site_base_url(request: Request) -> str:
+    configured = os.environ.get("SITE_URL", "").strip().rstrip("/")
+    if configured:
+        return configured
+    return str(request.base_url).rstrip("/")
+
+
+def render_index_html(request: Request) -> str:
+    index_path = STATIC_DIR / "index.html"
+    if not index_path.exists():
+        raise HTTPException(status_code=500, detail="UI files missing")
+    return index_path.read_text(encoding="utf-8").replace(
+        "{{SITE_URL}}", site_base_url(request)
+    )
 
 
 @asynccontextmanager
@@ -45,11 +62,33 @@ class StartJobResponse(BaseModel):
 
 
 @app.get("/", response_class=HTMLResponse)
-async def index() -> HTMLResponse:
-    index_path = STATIC_DIR / "index.html"
-    if not index_path.exists():
-        raise HTTPException(status_code=500, detail="UI files missing")
-    return HTMLResponse(index_path.read_text(encoding="utf-8"))
+async def index(request: Request) -> HTMLResponse:
+    return HTMLResponse(render_index_html(request))
+
+
+@app.get("/robots.txt", response_class=PlainTextResponse)
+async def robots_txt(request: Request) -> PlainTextResponse:
+    base = site_base_url(request)
+    body = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        f"Sitemap: {base}/sitemap.xml\n"
+    )
+    return PlainTextResponse(body)
+
+
+@app.get("/sitemap.xml")
+async def sitemap_xml(request: Request) -> Response:
+    base = site_base_url(request)
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>{base}/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>"""
+    return Response(content=xml, media_type="application/xml")
 
 
 @app.post("/api/jobs", response_model=StartJobResponse)

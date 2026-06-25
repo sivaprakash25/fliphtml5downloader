@@ -398,6 +398,56 @@ button {
   font-size: 0.85rem;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.seo-content {
+  margin-top: 1.25rem;
+}
+
+.seo-content h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
+
+.seo-content h3 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 0.95rem;
+  color: #cbd5e1;
+}
+
+.seo-content p,
+.seo-content li {
+  color: var(--muted);
+  line-height: 1.65;
+  font-size: 0.92rem;
+}
+
+.seo-content ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.seo-content a {
+  color: #a5b4fc;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.seo-content a:hover {
+  color: #c4b5fd;
+}
+
 @media (max-width: 720px) {
   .shell {
     padding-top: 1.5rem;
