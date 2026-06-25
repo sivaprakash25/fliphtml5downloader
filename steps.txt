@@ -1,2 +1,175 @@
-.\.venv\Scripts\uvicorn app:app --host 127.0.0.1 --port 8765
-Then open: http://127.0.0.1:8765
+================================================================================
+  FlipHTML5 Downloader — Local setup from GitHub
+  Repository: https://github.com/sivaprakash25/fliphtml5downloader
+================================================================================
+
+NOTE: The .venv folder is NOT in the repo. You must create it locally after
+      cloning. Same for the download/ output folder — it is created at runtime.
+
+
+--------------------------------------------------------------------------------
+1. PREREQUISITES
+--------------------------------------------------------------------------------
+
+  - Python 3.10 or newer (64-bit)
+  - Git
+  - Internet access (online.fliphtml5.com, static.fliphtml5.com)
+
+  Check Python version:
+
+    python --version
+    # or on Linux/macOS:
+    python3 --version
+
+
+--------------------------------------------------------------------------------
+2. CLONE THE REPOSITORY
+--------------------------------------------------------------------------------
+
+  git clone https://github.com/sivaprakash25/fliphtml5downloader.git
+  cd fliphtml5downloader
+
+
+--------------------------------------------------------------------------------
+3. CREATE VIRTUAL ENVIRONMENT & INSTALL DEPENDENCIES
+--------------------------------------------------------------------------------
+
+  --- Windows (PowerShell or CMD) ---
+
+  python -m venv .venv
+  .\.venv\Scripts\pip install --upgrade pip
+  .\.venv\Scripts\pip install -r requirements.txt
+
+  --- Linux / macOS ---
+
+  python3 -m venv .venv
+  source .venv/bin/activate
+  pip install --upgrade pip
+  pip install -r requirements.txt
+
+
+--------------------------------------------------------------------------------
+4. RUN THE WEB UI (recommended)
+--------------------------------------------------------------------------------
+
+  --- Windows — easiest ---
+
+  Double-click:  run-ui.bat
+
+  (run-ui.bat creates .venv and installs dependencies automatically if missing)
+
+  --- Windows — manual ---
+
+  .\.venv\Scripts\uvicorn app:app --host 127.0.0.1 --port 8765
+
+  --- Linux / macOS ---
+
+  source .venv/bin/activate
+  uvicorn app:app --host 127.0.0.1 --port 8765
+
+  --- Open in browser ---
+
+  http://127.0.0.1:8765
+
+  Paste a FlipHTML5 URL (example):
+  https://online.fliphtml5.com/ikikw/tvsx/#p=1
+
+  Click "Download PDF". Progress shows on screen; PDF auto-downloads when done.
+
+  --- Stop the server ---
+
+  Press Ctrl+C in the terminal window.
+
+
+--------------------------------------------------------------------------------
+5. RUN THE CLI (command line, no browser)
+--------------------------------------------------------------------------------
+
+  Activate the virtual environment first (see step 3), then:
+
+  --- Download using online config.js (default) ---
+
+  python main.py "https://online.fliphtml5.com/ikikw/tvsx/" --pdf book.pdf
+
+  --- Download using a local config.js file (optional) ---
+
+  python main.py "https://online.fliphtml5.com/ikikw/tvsx/" --config config.js --pdf book.pdf
+
+  --- More options ---
+
+  python main.py "https://online.fliphtml5.com/USER/BOOK/" ^
+    --out download ^
+    --workers 8 ^
+    --overwrite ^
+    --pdf output/book.pdf
+
+  (On Linux/macOS, replace ^ line breaks with \ )
+
+
+--------------------------------------------------------------------------------
+6. OPTIONAL ENVIRONMENT VARIABLES (web hosting / tuning)
+--------------------------------------------------------------------------------
+
+  MAX_CONCURRENT_JOBS=3      Max books processing at once (default: 3)
+  JOB_MAX_AGE_SECONDS=1800   Delete abandoned jobs after 30 min
+  JOB_SWEEP_SECONDS=300        Cleanup interval in seconds
+  SITE_URL=https://yoursite.com   Public URL for SEO tags (production only)
+
+  Windows example:
+
+  set MAX_CONCURRENT_JOBS=2
+  .\.venv\Scripts\uvicorn app:app --host 127.0.0.1 --port 8765
+
+  Linux/macOS example:
+
+  export MAX_CONCURRENT_JOBS=2
+  uvicorn app:app --host 127.0.0.1 --port 8765
+
+
+--------------------------------------------------------------------------------
+7. DOCKER (alternative to local Python setup)
+--------------------------------------------------------------------------------
+
+  docker build -t fliphtml5downloader .
+  docker run -p 8765:8765 fliphtml5downloader
+
+  Open: http://localhost:8765
+
+
+--------------------------------------------------------------------------------
+8. TROUBLESHOOTING
+--------------------------------------------------------------------------------
+
+  Problem                          Fix
+  -------                          ---
+  python not found                 Install Python 3.10+ from python.org
+  pip install fails on wasmtime    Use 64-bit Python 3.10+
+  Port 8765 already in use         Stop old server (Ctrl+C) or change port:
+                                   uvicorn app:app --host 127.0.0.1 --port 9000
+  Web UI loads, download fails     Check internet; verify FlipHTML5 URL works
+  ModuleNotFoundError              Activate .venv and re-run pip install
+  run-ui.bat does nothing          Run from project folder; check Python is installed
+
+  Verify install:
+
+  Windows:  .\.venv\Scripts\python -c "from app import app; print('OK')"
+  Linux:    .venv/bin/python -c "from app import app; print('OK')"
+
+
+--------------------------------------------------------------------------------
+9. PROJECT FOLDERS CREATED AT RUNTIME (not in git)
+--------------------------------------------------------------------------------
+
+  .venv/     Local Python virtual environment (you create in step 3)
+  .cache/    Cached deString.js for faster decryption
+  download/  Temporary PDF and page files (auto-deleted after download in web UI)
+
+
+--------------------------------------------------------------------------------
+10. DISCLAIMER
+--------------------------------------------------------------------------------
+
+  For personal offline use of content you are legally allowed to access.
+  Not affiliated with FlipHTML5. Do not redistribute copyrighted PDFs.
+
+================================================================================
