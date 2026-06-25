@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: fliphtml5downloader
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MAX_CONCURRENT_JOBS
+        value: 2
+      - key: JOB_MAX_AGE_SECONDS
+        value: 1800
+      - key: SITE_URL
+        sync: false
+    healthCheckPath: /
