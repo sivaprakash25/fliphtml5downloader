@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlipHTML5 Downloader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="bg">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+  </div>
+
+  <main class="shell">
+    <header class="hero">
+      <div class="logo">
+        <span class="logo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5 4h10a3 3 0 0 1 3 3v13l-4-2.5L10 20V4z" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M5 4v13l4-2.5" stroke="currentColor" stroke-width="1.6"/>
+          </svg>
+        </span>
+        <div>
+          <p class="eyebrow">FlipHTML5</p>
+          <h1>Book Downloader</h1>
+        </div>
+      </div>
+      <p class="subtitle">
+        Paste any public FlipHTML5 link. We fetch and download every page, and build a PDF for you.
+      </p>
+    </header>
+
+    <section class="card">
+      <label class="field-label" for="book-url">Book URL</label>
+      <div class="input-row">
+        <input
+          id="book-url"
+          type="url"
+          placeholder="https://online.fliphtml5.com/ikikw/tvsx/#p=1"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button id="start-btn" type="button">
+          <span class="btn-label">Download PDF</span>
+          <span class="btn-spinner" hidden></span>
+        </button>
+      </div>
+      <p class="hint">Works with <code>online.fliphtml5.com</code> and <code>fliphtml5.com</code> links.</p>
+    </section>
+
+    <section id="progress-panel" class="card progress-card" hidden>
+      <div class="progress-head">
+        <div>
+          <p class="phase-label" id="phase-label">Preparing</p>
+          <h2 id="book-title">—</h2>
+          <p class="status-text" id="status-text">Starting...</p>
+        </div>
+        <div class="ring" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-track" cx="60" cy="60" r="52"></circle>
+            <circle class="ring-value" cx="60" cy="60" r="52" id="ring-progress"></circle>
+          </svg>
+          <span class="ring-text" id="percent-text">0%</span>
+        </div>
+      </div>
+
+      <div class="bar">
+        <div class="bar-fill" id="bar-fill"></div>
+      </div>
+
+      <ol class="steps" id="steps">
+        <li data-phase="fetching">Fetch config.js</li>
+        <li data-phase="decoding">Decode pages</li>
+        <li data-phase="downloading">Download images</li>
+        <li data-phase="building">Build PDF</li>
+        <li data-phase="done">Complete</li>
+      </ol>
+
+      <div class="actions">
+        <a id="download-link" class="primary-link" href="#" hidden>Download again</a>
+        <button id="reset-btn" type="button" class="ghost-btn" hidden>Download another</button>
+      </div>
+
+      <p id="error-box" class="error-box" hidden></p>
+    </section>
+
+    <footer class="footer">
+      <p>For personal offline use only. Respect copyright of the original publisher.</p>
+    </footer>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
