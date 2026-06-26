@@ -3,6 +3,7 @@ aiohttp>=3.11.13
 tqdm>=4.67.3
 img2pdf>=0.5.1
 pikepdf>=10.3.0
+Pillow>=10.0.0
 wasmtime>=41.0.0
 fastapi>=0.115.0
 uvicorn[standard]>=0.32.0

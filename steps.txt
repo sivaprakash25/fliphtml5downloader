@@ -112,8 +112,13 @@ NOTE: The .venv folder is NOT in the repo. You must create it locally after
 
   MAX_CONCURRENT_JOBS=3      Max books processing at once (default: 3)
   JOB_MAX_AGE_SECONDS=1800   Delete abandoned jobs after 30 min
-  JOB_SWEEP_SECONDS=300        Cleanup interval in seconds
+  JOB_SWEEP_SECONDS=300      Cleanup interval in seconds
   SITE_URL=https://yoursite.com   Public URL for SEO tags (production only)
+
+  PDF size & speed tuning:
+  PDF_JPEG_QUALITY=85        JPEG quality 1-95 (default 85; try 75 for smaller files)
+  PDF_MAX_DIMENSION=0        Max page pixels, 0=original (try 1800 to shrink further)
+  PDF_BUILD_WORKERS=8        Parallel threads when building PDF
 
   Windows example:
 

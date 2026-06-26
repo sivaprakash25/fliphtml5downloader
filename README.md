@@ -92,6 +92,10 @@ Used by the web app when hosting publicly:
 | `MAX_CONCURRENT_JOBS` | `3` | Max books processing at once |
 | `JOB_MAX_AGE_SECONDS` | `1800` | Delete abandoned jobs after 30 min |
 | `JOB_SWEEP_SECONDS` | `300` | Cleanup check interval |
+| `SITE_URL` | *(auto)* | Public site URL for SEO tags |
+| `PDF_JPEG_QUALITY` | `85` | JPEG quality when building PDF (1–95; lower = smaller) |
+| `PDF_MAX_DIMENSION` | `0` | Max page width/height in px (`0` = original) |
+| `PDF_BUILD_WORKERS` | `8` | Parallel threads for PDF compression |
 
 Example:
 

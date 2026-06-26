@@ -6,10 +6,12 @@ import contextlib
 import io
 import os
 import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Callable
 
 import img2pdf
 import pikepdf
+from PIL import Image
 from tqdm import tqdm
 
 from utils.text import short_label
@@ -17,6 +19,40 @@ from utils.text import short_label
 
 class PDFBuildCancelled(Exception):
     pass
+
+
+def _pdf_settings() -> tuple[int, int, int]:
+    quality = int(os.environ.get("PDF_JPEG_QUALITY", "85"))
+    quality = max(1, min(quality, 95))
+    max_dim = int(os.environ.get("PDF_MAX_DIMENSION", "0"))
+    workers = int(os.environ.get("PDF_BUILD_WORKERS", "0"))
+    if workers <= 0:
+        workers = min(8, os.cpu_count() or 4)
+    return quality, max_dim, workers
+
+
+def _compress_page_image(
+    image_path: str,
+    jpeg_quality: int,
+    max_dimension: int,
+) -> bytes:
+    with Image.open(image_path) as img:
+        if img.mode not in ("RGB", "L"):
+            img = img.convert("RGB")
+        if max_dimension > 0:
+            img.thumbnail(
+                (max_dimension, max_dimension),
+                Image.Resampling.LANCZOS,
+            )
+        buf = io.BytesIO()
+        img.save(
+            buf,
+            format="JPEG",
+            quality=jpeg_quality,
+            optimize=True,
+            progressive=True,
+        )
+        return buf.getvalue()
 
 
 def build_pdf_from_images(
@@ -34,43 +70,57 @@ def build_pdf_from_images(
     if pdf_dir:
         os.makedirs(pdf_dir, exist_ok=True)
 
-    merged = pikepdf.Pdf.new()
+    jpeg_quality, max_dimension, workers = _pdf_settings()
     total = len(image_paths)
-    try:
+    compressed: list[bytes | None] = [None] * total
+    done = 0
+
+    def compress_one(index: int, image_path: str) -> tuple[int, bytes]:
+        if cancel_event is not None and cancel_event.is_set():
+            raise PDFBuildCancelled("PDF build cancelled")
+        data = _compress_page_image(image_path, jpeg_quality, max_dimension)
+        return index, data
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = [
+            pool.submit(compress_one, index, path)
+            for index, path in enumerate(image_paths)
+        ]
         pbar_ctx = (
             tqdm(total=total, desc="pdf", unit="page", leave=False)
             if on_page is None
             else contextlib.nullcontext()
         )
         with pbar_ctx as pbar:
-            for index, image_path in enumerate(image_paths, start=1):
+            for future in as_completed(futures):
                 if cancel_event is not None and cancel_event.is_set():
                     raise PDFBuildCancelled("PDF build cancelled")
-                label = short_label(os.path.basename(image_path))
+                index, data = future.result()
+                compressed[index] = data
+                done += 1
+                label = short_label(os.path.basename(image_paths[index]))
                 if pbar is not None:
                     pbar.set_description_str(label)
-                if on_page is not None:
-                    on_page(index, total, label)
-                try:
-                    page_pdf = img2pdf.convert(image_path)
-                    with pikepdf.open(io.BytesIO(page_pdf)) as one_page:
-                        merged.pages.extend(one_page.pages)
-                except (img2pdf.ImageOpenError, OSError, pikepdf.PdfError) as exc:
-                    name = os.path.basename(image_path)
-                    raise ValueError(
-                        f"failed to process image '{name}': {exc}"
-                    ) from exc
-                if pbar is not None:
                     pbar.update(1)
+                if on_page is not None:
+                    on_page(done, total, label)
 
-            if cancel_event is not None and cancel_event.is_set():
-                raise PDFBuildCancelled("PDF build cancelled")
-            if title:
-                merged.docinfo["/Title"] = title
-            if description:
-                merged.docinfo["/Subject"] = description
-            merged.save(pdf_path)
-    except pikepdf.PdfError as exc:
-        raise ValueError(str(exc)) from exc
-    finally:
-        merged.close()
+    if cancel_event is not None and cancel_event.is_set():
+        raise PDFBuildCancelled("PDF build cancelled")
+
+    streams = [io.BytesIO(block) for block in compressed if block is not None]
+    try:
+        pdf_bytes = img2pdf.convert(*streams)
+    except (img2pdf.ImageOpenError, ValueError, TypeError) as exc:
+        raise ValueError(f"failed to assemble PDF: {exc}") from exc
+
+    with pikepdf.open(io.BytesIO(pdf_bytes)) as pdf:
+        if title:
+            pdf.docinfo["/Title"] = title
+        if description:
+            pdf.docinfo["/Subject"] = description
+        pdf.save(
+            pdf_path,
+            compress_streams=True,
+            object_stream_mode=pikepdf.ObjectStreamMode.generate,
+        )

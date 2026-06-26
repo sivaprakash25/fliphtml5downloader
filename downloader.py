@@ -314,7 +314,7 @@ class FlipHTML5Downloader:
                 print("Creating PDF...")
             self._emit(
                 phase="building",
-                message="Building PDF from downloaded pages...",
+                message=f"Compressing and assembling {len(image_paths)} pages...",
                 current=0,
                 total=len(image_paths),
                 title=prepared.title,
